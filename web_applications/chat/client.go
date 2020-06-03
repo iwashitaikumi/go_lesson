@@ -17,7 +17,11 @@ func (c *client) read() {
 	for {
 		var msg *message
 		if err := c.socket.ReadJSON(&msg); err == nil {
-			msg.When = time.Now()
+			now := time.Now()
+			jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+			nowUTC := now.UTC()
+			nowJST := nowUTC.In(jst)
+			msg.When = nowJST                    
 			msg.Name = c.userData["name"].(string)
 			c.room.forward <- msg
 		} else {
