@@ -41,7 +41,7 @@
                     }
                     socket.onmessage = function(e) {
                         var msg = eval("(" + e.data + ")");
-                        messages.append($("<li>").append($("<strong>").text(msg.Name + ": "), $("<span>").text(msg.Message)));
+                        messages.append($("<li>").append($("<strong>").text(msg.Name + ": "), $("<span>").text(msg.Message),$("<span>").text(" " + msg.When)));
                     }
                 }
             });
