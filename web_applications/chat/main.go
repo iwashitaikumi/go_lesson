@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/stretchr/objx"
 	"log"
 	"net/http"
 	"text/template"
@@ -27,7 +28,13 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			template.Must(template.ParseFiles(filepath.Join("templates",
 				t.filename)))
 	})
-	t.templ.Execute(w, r)
+	data := map[string]interface{} {
+		"Host": r.Host,
+	}
+	if authCookie, err := r.Cookie("auth"); err == nil {
+		data["UserData"] = objx.MustFromBase64(authCookie.Value)
+	}
+	t.templ.Execute(w, data)
 }
 
 func main(){
@@ -35,9 +42,9 @@ func main(){
 	flag.Parse() // フラグを解釈する
 	gomniauth.SetSecurityKey("セキュリティー") // gomniauthのセットアップ
 	gomniauth.WithProviders (
-		facebook.New("958358529337-029gmndul8jgn86dqfjaaiiu4h74gjlc.apps.googleusercontent.com","Gg9eBuEUTt53dzO4_MVG7Llc","https://localhost:8080/auth/callback/facebook"),
-		github.New("958358529337-029gmndul8jgn86dqfjaaiiu4h74gjlc.apps.googleusercontent.com","Gg9eBuEUTt53dzO4_MVG7Llc","https://localhost:8080/auth/callback/github"),
-		google.New("958358529337-029gmndul8jgn86dqfjaaiiu4h74gjlc.apps.googleusercontent.com","Gg9eBuEUTt53dzO4_MVG7Llc","https://localhost:8080/auth/callback/google"),
+		facebook.New("958358529337-029gmndul8jgn86dqfjaaiiu4h74gjlc.apps.googleusercontent.com","Gg9eBuEUTt53dzO4_MVG7Llc","http://localhost:8080/auth/callback/facebook"),
+		github.New("958358529337-029gmndul8jgn86dqfjaaiiu4h74gjlc.apps.googleusercontent.com","Gg9eBuEUTt53dzO4_MVG7Llc","http://localhost:8080/auth/callback/github"),
+		google.New("958358529337-029gmndul8jgn86dqfjaaiiu4h74gjlc.apps.googleusercontent.com","Gg9eBuEUTt53dzO4_MVG7Llc","http://localhost:8080/auth/callback/google"),
 	)
 	r := newRoom()
 	http.Handle("/assets/", http.StripPrefix("/assets",http.FileServer(http.Dir("/assets"))))
