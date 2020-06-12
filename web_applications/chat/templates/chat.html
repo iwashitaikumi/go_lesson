@@ -1,19 +1,29 @@
 <html>
     <head>
         <title>ちゃっと〜</title>
+        <link rel ="stylesheet" href ="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
         <style>
-            input { display: block; }
-            ul { list-style: none; }
+            ul#messages { list-style: none; }
+            ul#messages li { margin-bottom: 2px; }
+            ul#messages li { margin-right: 10px; }
         </style>
     </head>
     <body>
-        <ul id = "messages"></ul>
-        チャットアプリケーション
-        <form id = "chatbox">
-            {{.UserData.name}}:<br/>
-            <textarea></textarea>
-            <input type = "submit" value = "送信" />
-        </form>
+        <div class = "container">
+            <div class = "panel panel-default">
+                <div class = "panel-body">
+                    <ul id = "messages"></ul>
+                </div>
+            </div>
+            <form id = "chatbox" role = "form">
+                <div class = "form-group">
+                    <label for = "messages">{{.UserData.name}}からメッセージ送信</label>
+                    または <a href = "/logout">サインアウト</a>
+                    <textarea id = "message" class = "form-control"></textarea>
+                </div>       
+                <input type = "submit" value = "送信" class = "btn btn-default" />            
+            </form>
+        </div>
         
         <script src = "//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
         </script>
@@ -41,10 +51,11 @@
                     }
                     socket.onmessage = function(e) {
                         var msg = eval("(" + e.data + ")");
-                        messages.append($("<li>").append($("<strong>").text(msg.Name + ": "), $("<span>").text(msg.Message),$("<span>").text(" " + msg.When)));
+                        messages.append($("<li>").append($("<img>").attr("title", msg.Name).css({width: 50, varticalAlign: "middle"}).attr("src", msg.AvatarURL),$("<strong>").text(msg.Name + ": "), $("<span>").text(msg.Message),$("<span>").text(" " + msg.When)));
                     }
                 }
             });
         </script>
     </body>
 </html>
+

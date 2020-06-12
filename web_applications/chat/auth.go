@@ -7,6 +7,8 @@ import (
 	"log"
 	"fmt"
 	"github.com/stretchr/gomniauth"
+	"crypto/md5"
+	"io"
 )
 
 type authHundler struct {
@@ -57,8 +59,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) { // /auth/{action}/{p
 		if err != nil {
 			log.Fatalln("ユーザの取得に失敗しました",provider, "-", err)
 		}
+		m := md5.New()
+		io.WriteString(m, strings.ToLower(user.Name()))
+		userID := fmt.Sprintf("%x", m.Sum(nil))
 		authCookieValue := objx.New(map[string]interface{}{
-			"name":	user.Name(),
+			"userid":     userID,
+			"name":		  user.Name(),
+			"avatar_url": user.AvatarURL(),
+			"email":	  user.Email(),
 		}).MustBase64()
 		http.SetCookie(w, &http.Cookie{
 			Name:  "auth",

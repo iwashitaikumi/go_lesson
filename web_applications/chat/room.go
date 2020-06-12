@@ -13,7 +13,8 @@ type room struct {
 	join    chan *client 	 // チャットルームに参加しようとしているクライアントのためのチャネル
 	leave   chan *client 	 // チャットルームから退室しようとしているクライアントのためのチャネル
 	clients map[*client]bool // 在室している全てのクライアントが保持される
-	tracer trace.Tracer 	 // tracerはチャットルーム上で行われた操作のログを受け取る
+	tracer  trace.Tracer 	 // tracerはチャットルーム上で行われた操作のログを受け取る
+	avatar  Avatar           // アバターの情報
 }
 
 func newRoom() *room {
